@@ -1,0 +1,433 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Common patient genomes hosted on Melcaya">
+  <meta name="author" content="Jaume Bague">
+
+  <title>MELCAYA: files server</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+  <style type="text/css">
+    .mainbody {
+      padding: 50px 15px;
+    }
+    .subtitle {
+      font-weight: 200;
+    }
+    pre {
+      background-color: #ededed;
+      border-radius: 5px;
+      padding: 20px;
+    }
+    code {
+      color: inherit;
+    }
+    label {
+      font-weight: bold;
+    }
+    button, .local_code {
+      cursor: pointer;
+    }
+    hr {
+      margin: 30px 0;
+    }
+    .prewrap {
+      position: relative;
+      display: -webkit-inline-box;
+      display: -webkit-inline-flex;
+      display: -ms-inline-flexbox;
+      display: inline-flex;
+      vertical-align: middle;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .prewrap > .btn, .prewrap > pre {
+      position: relative;
+      -webkit-box-flex: 0;
+      -webkit-flex: 0 1 auto;
+      -ms-flex: 0 1 auto;
+      flex: 0 1 auto;
+      margin: 0;
+    }
+    .prewrap > .btn {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+    .prewrap > pre {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+      width: 100%;
+    }
+    #manifest_heading a {
+      color: #666;
+    }
+    .footer {
+      background-color: #ededed;
+      color: #999;
+      padding: 20px 0;
+      font-size: 0.8em;
+    }
+    .footer a {
+      color: #999;
+      text-decoration: underline;
+    }
+    .footer img {
+      height: 60px;
+    }
+    .footer .sll-logo {
+      margin-top: 20px;
+    }
+    @media only screen and (max-width: 500px) {
+      .mainbody {
+        padding-top: 10px;
+      }
+      h1.display-1 {
+        font-size: 2.5rem;
+      }
+      h2 {
+        font-size: 1.2rem;
+      }
+      pre {
+        padding: 10px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="container mainbody">
+
+    <img title="European Programs for Research and Education" src="https://melcaya.eu/wp-content/uploads/2023/01/Melcaya-Logo-600x130-transparent.png" class="hidden-lg-down float-lg-right">
+    <h1 class="display-1">MELCAYA</h1>
+    <h2 class="subtitle text-muted mb-5">Genomic repository of patients</h2>
+
+    <p>This resource hosts commonly used bioinformatics patients genomes with the help
+      of a grant from <a href="https://www.melcaya.eu/consortium/">MELCAYA Consortium</a>.</p>
+    <p>In order to get the references, you need to sync the files from Server to your environment.
+      This web page contains two tools to help you with that - a <a href="#sync-command-builder">command builder</a>
+      and a <a href="#command-line-script">command-line script</a>.
+    <p>For more information about this resource, please see the GitHub readme at
+      <a href="https://github.com/Melanoma_Idibaps">https://github.com/Melanoma_Idibaps</a>.</p>
+
+    <hr>
+
+    <h2><a name="sync-command-builder">Sync command builder</a></h2>
+    <p>Use the dropdown boxes below to build an sync command for your reference.</p>
+
+    <form>
+      <div class="row">
+        <div class="form-group col-sm-3">
+          <label for="Work_package">Work_Package</label>
+          <select class="form-control" id="Work_package">
+            <option value="">[ select ]</option>
+            <optgroup label="Groups Division">
+              <option value="WP1">WP1</option>
+              <option value="WP2">WP2</option>
+              <option value="WP3">WP3</option>
+          </select>
+        </div>
+        <div class="form-group col-sm-3">
+          <label for="Genetics">Genetics</label>
+          <select class="form-control" id="Genetics">
+            <option value="">[ select ]</option>
+            <option value="BRAF-MUTAT">BRAF-MUTAT</option>
+            <option value="BRAF-WT">BRAF-WT</option>
+            <option value="ALL">ALL</option>
+          </select>
+        </div>
+        <div class="form-group col-sm-3">
+          <label for="Subgroup">Subgroup</label>
+          <select class="form-control" id="Subgroup">
+            <option value="">[ select ]</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+          </select>
+        </div>
+        <div class="form-group col-sm-3">
+          <label for="Type">Type</label>
+          <select class="form-control" id="Type">
+            <option value="">[ select ]</option>
+            <option value="FASTA">FASTA</option>
+            <option value="BAM">BAM</option>
+          </select>
+        </div>
+      </div>
+       <div class="row">
+        <div class="form-group col-sm-9">
+          <label for="local">Local directory</label>
+          <small class="text-muted">Available variables:
+            <code class="local_code">{Work_package}</code>,
+            <code class="local_code">{Genetics}</code>,
+            <code class="local_code">{Subgroup}</code>,
+            <code class="local_code">{Type}</code>
+          </small>
+          <input type="text" class="form-control" id="local" value="./references/{Work_package}/{Genetics}/{Subgroup}/{Type}" style="font-family:Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;">
+        </div>
+      </div>
+    </form>
+    <h5>Bucket URL</h5>
+    <div class="prewrap" id="bucket_url_wrapper">
+      <button class="btn btn-warning" data-clipboard-target="#bucket_url">Copy</button>
+      <pre><code id="bucket_url"><span class="text-muted">waiting for selection&hellip;</span></code></pre>
+    </div>
+
+    <h5>Sync command</h5>
+    <div class="prewrap" id="sync_command_wrapper">
+      <button class="btn btn-warning" data-clipboard-target="#sync_command">Copy</button>
+      <pre><code id="sync_command"><span class="text-muted">waiting for selection&hellip;</span></code></pre>
+    </div>
+
+    <div id="manifest_accordion" role="tablist" aria-multiselectable="true">
+      <div class="card">
+        <div class="card-header" role="tab" id="manifest_heading">
+          <h6 class="mb-0">
+            <a data-toggle="collapse" data-parent="#manifest_accordion" href="#manifest_dropdown" aria-expanded="true" aria-controls="manifest_dropdown">
+              File list for selected download
+            </a>
+          </h6>
+        </div>
+        <div id="manifest_dropdown" class="collapse" role="tabpanel" aria-labelledby="manifest_heading">
+          <pre class="card-block mb-0" id="file_manifest">Loading file manifest..</pre>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <h2><a name="command-line-script">Command-line Script</a></h2>
+    <p>You can use a bash script we've written which can be used to obtain patients genomes
+      where you need them. This builds the required command using either command-line prompts or
+      flags, then runs the sync command for you.</p>
+    <p>Note that you need to have the
+      <a href="http:userguide/installing.html" target="_blank">rsync command line tools</a>
+      installed and set up with proper authentication.</p>
+
+    <h5 class="mt-4">Quick usage</h5>
+    <p>Paste this command in your terminal to download and run the script directly.</p>
+    <div class="prewrap">
+      <button class="btn btn-warning" data-clipboard-target="#rsync_script_call">Copy</button>
+      <pre><code id="rsync_script_call">curl -fsSL https://ewels.github.io/melcaya/rsync-igenomes.sh | bash</code></pre>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div class="container">
+      This resource was developed by Jaume Bague</a>, a bioinformatician
+      at the HCB-Idibaps</a> in Barcelona,
+      Spain. It is based on the <a href="https://ewels.github.io/AWS-iGenomes/"> Phil Ewels job</a>
+      which has been modified to our requirements.
+      
+
+  <!--  JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+  <script type="text/javascript">
+  var types = {
+"WP1/BRAF-MUTAT/A:["fasta", "bam"],        
+"WP1/BRAF-MUTAT/B:["fasta", "bam"]            
+  };
+  var type_nicenames = {
+      fasta: "FASTA",
+      bam: "BAM"
+  };
+  var type_suffixes = {
+      fasta: "FASTA/",
+      bam: "BAM/"
+  };
+  var manifest = [];
+  $(function(){
+    // Initiate clipboard.js
+    new Clipboard('.prewrap > .btn');
+
+    // Get the full file list
+    try {
+      $.get('melcaya_files_manifest.txt', function(data){
+        try {
+          manifest = data.match(/[^\r\n]+/g);
+          $('#file_manifest').html('waiting for selection..');
+        } catch(e){
+          $('#file_manifest').html('Error - could not load file manifest.').attr('id', 'file_manifest_error');
+          console.error(e);
+        }
+      }).fail(function() {
+        $('#file_manifest').html('Error - could not load file manifest.').attr('id', 'file_manifest_error');
+      });
+    } catch(e){
+      $('#file_manifest').html('Error - could not load file manifest.').attr('id', 'file_manifest_error');
+      console.error(e);
+    }
+
+    // Build our variables
+    var paths = Object.keys(types);
+    var Work_packages = [];
+    var Genetics = {};
+    var Subgroup = {};
+    for(i=0; i<paths.length; i++){
+      var s = paths[i].split('/');
+      if(Work_packages.indexOf(s[0]) < 0){
+        Work_packages.push(s[0]);
+      }
+      if(Genetics[s[0]] == undefined){
+        Genetics[s[0]] = [];
+      }
+      if(Genetics[s[0]].indexOf(s[1]) < 0){
+        Genetics[s[0]].push(s[1]);
+      }
+      if(Subgroup[s[0]+'/'+s[1]] == undefined){
+        Subgroup[s[0]+'/'+s[1]] = [];
+      }
+      Subgroup[s[0]+'/'+s[1]].push(s[2]);
+    }
+    // Populate first dropdown
+    for(i=0; i<genomes.length; i++){
+      $('#Work_packages').append($('<option>', {
+        value: Work_packages[i],
+        text: Work_packages[i].replace('_',' ')
+      }));
+    }
+    // LISTENERS!
+    $('#Work_packages').change(function(e){
+      e.preventDefault();
+      // Reset downstream dropdown
+      $('#Genetics').html('<option value="">Please select a source</option>').attr('disabled', true);
+      $('#Subgroup').html('<option value="">Please select a build</option>').attr('disabled', true);
+      $('#bucket_url, #sync_command').html('<span class="text-muted">waiting for selection</span>');
+      // Set up source dropdown
+      var g = $(this).val();
+      if(g == ''){
+        $('#Genetics').html('<option value="">Please select a genome</option>').attr('disabled', true);
+      } else {
+        $('#Genetics').html('').attr('disabled', false);
+        if(Genetics[g].length > 1){
+          $('#Genetics').html('<option value="">[ select ]</option>');
+        }
+        for(i=0; i<Genetics[g].length; i++){
+          $('#Genetics').append($('<option>', {
+            value: Genetics[g][i],
+            text: Genetics[g][i]
+          }));
+        }
+        $('#Genetics').trigger('change');
+        $('#Subgroup').trigger('change');
+        $('#Type').trigger('change');
+      }
+    });
+    // Source dropdown
+    $('#Genetics').change(function(e){
+      e.preventDefault();
+      // Reset downstream dropdown
+      $('#Type').html('<option value="">Please select a build</option>').attr('disabled', true);
+      $('#bucket_url, #sync_command').html('<span class="text-muted">waiting for selectionâ€¦</span>');
+      // Set up build dropdown
+      var g = $('#Work_package').val();
+      var s = $(this).val();
+      var k = g+'/'+s;
+      if(s == ''){
+        $('#Subgroup').html('<option value="">Please select a source</option>').attr('disabled', true);
+      } else {
+        $('#Subgroup').html('').attr('disabled', false);
+        if(Subgroup[k].length > 1){
+          $('#Subgroup').html('<option value="">[ select ]</option>');
+        }
+        for(i=0; i<builds[k].length; i++){
+          $('#Subgroup').append($('<option>', {
+            value: Subgroup[k][i],
+            text: Subgroup[k][i]
+          }));
+        }
+        $('#Subgroup').trigger('change');
+        $('#Type').trigger('change');
+      }
+    });
+    // Build dropdown
+    $('#Subgroup').change(function(e){
+      e.preventDefault();
+      // Set up type dropdown
+      var g = $('#Work_package').val();
+      var s = $('#Genetics').val();
+      var b = $(this).val();
+      var k = g+'/'+s+'/'+b;
+      if(b == ''){
+        $('#Type').html('<option value="">Please select a source</option>').attr('disabled', true);
+        $('#bucket_url, #sync_command').html('<span class="text-muted">waiting for selectionâ€¦</span>');
+      } else {
+        $('#Type').html('').attr('disabled', false);
+        if(types[k].length > 1){
+          $('#Type').html('<option value="">[ select ]</option>');
+        }
+        for(i=0; i<types[k].length; i++){
+          $('#Type').append($('<option>', {
+            value: types[k][i],
+            text: type_nicenames[types[k][i]]
+          }));
+        }
+        $('#Type').trigger('change');
+      }
+    });
+    // Type dropdown
+    $('#Type, #local').change(function(e){ update_cmd(); });
+    $('#local').keyup(function(e){ update_cmd(); });
+    function update_cmd(){
+      var g = $('#Work_package').val();
+      var s = $('#Genetics').val();
+      var b = $('#Subgroup').val();
+      var t = $('#Type').val();
+      var region = $('#region').val();
+      var local = $('#local').val();
+      if(g == '' || s == '' || b == '' || t == '' || region == '' || local == ''){
+        $('#bucket_url, #sync_command, #file_manifest').html('<span class="text-muted">waiting for selectionâ€¦</span>');
+        $('#bucket_url_wrapper button, #sync_command_wrapper button')
+          .removeClass('btn-warning')
+          .attr('disabled', true);
+      } else {
+        // Build path and sync command
+        var path = g+'/'+s+'/'+b+'/'+type_suffixes[t];
+        local = local.replace('{Work_package}',g).replace('{Genetics}',s).replace('{Subgroup}',b).replace('{Type}',type_suffixes[t]);
+        var s3path = 's3://hcb/patient-genome'+path;
+        var s3cmd = 'resync folder --yes-sign-request --region '+region+' sync '+s3path+' '+local;
+        if(t == 'gtf'){
+          s3path += 'genes.gtf';
+          s3cmd += ' --exclude "*" --include "genes.gtf"';
+        }
+        if(t == 'bed12'){
+          s3path += 'genes.bed';
+          s3cmd += ' --exclude "*" --include "genes.bed"';
+        }
+        $('#bucket_url').html(s3path);
+        $('#sync_command').html(s3cmd);
+        $('#bucket_url_wrapper button, #sync_command_wrapper button')
+          .addClass('btn-warning')
+          .attr('disabled', false);
+
+        // Get the file manifest
+        if(manifest.length > 0){
+          var files = '';
+          for(i=0; i<manifest.length; i++){
+            if(manifest[i].substr(0, s3path.length) == s3path){
+              files += manifest[i] + "\n";
+            }
+          }
+          $('#file_manifest').html(files);
+        }
+      }
+    }
+
+    // Code example clicks
+    $('.local_code').click(function(e){
+      var ns = $('#local').val() + $(this).text();
+      $('#local').val(ns);
+    });
+
+  });
+  </script>
+</body>
+</html>
